@@ -2,42 +2,34 @@
 <html>
 <head>
     <title>FastFlow OAuth Callback</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
             background-color: #f5f5f5;
         }
         .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 600px;
+            max-width: 400px;
             width: 100%;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #666;
-            margin-bottom: 20px;
-        }
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
             width: 40px;
             height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
@@ -45,28 +37,54 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #error {
+            color: #f44336;
+            display: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>FastFlow OAuth Callback</h1>
+        <h2>FastFlow OAuth</h2>
         <div class="spinner"></div>
         <p>Processing authentication...</p>
+        <div id="error"></div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get the authorization code and state from URL parameters
+        function handleCallback() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             const state = urlParams.get('state');
-            
-            // Construct the deep link URL with the authorization code
-            const deepLink = `fastflow://oauth?code=${code}&state=${state}`;
-            
-            // Redirect to the app
-            window.location.href = deepLink;
-        });
+            const error = urlParams.get('error');
+
+            if (error) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error: ' + error;
+                return;
+            }
+
+            if (!code) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'No authorization code received';
+                return;
+            }
+
+            // Redirect to app with auth code
+            const redirectUrl = `com.appdev437.fastflow://oauth2redirect?code=${encodeURIComponent(code)}`;
+            if (state) {
+                redirectUrl += `&state=${encodeURIComponent(state)}`;
+            }
+
+            // Add a small delay to show the loading state
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 1000);
+        }
+
+        // Run when page loads
+        window.addEventListener('load', handleCallback);
     </script>
 </body>
 </html>
