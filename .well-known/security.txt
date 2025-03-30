@@ -1,0 +1,6 @@
+# FastFlow Security Policy
+Contact: mailto:security@fastflow-app.com
+Expires: 2025-03-30T04:00:00.000Z
+Preferred-Languages: en
+Canonical: https://tryingapp136.github.io/fastflow-oauth/.well-known/security.txt
+Policy: https://tryingapp136.github.io/fastflow-oauth/security-policy.html 
